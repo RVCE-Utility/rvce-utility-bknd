@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export const GET = (request: Request) => {
+export const GET = () => {
   return NextResponse.json({
     msg: "Working fine",
   });
