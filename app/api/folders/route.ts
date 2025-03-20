@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import Folder from "@/models/folder";
-import { searchFolderStructure } from "@/utils/getFolders";
 
 mongoose.connect(process.env.MONGODB_URI as string);
 
