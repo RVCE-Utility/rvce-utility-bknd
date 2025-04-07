@@ -35,11 +35,14 @@ export const DELETE = async (req: NextRequest) => {
       courseId: queries.courseId,
     });
     return NextResponse.json({
-      message: res.message,
+      success: true,
       daySchedule: res.daySchedule,
     });
   } catch (error) {
     console.error("Error Deleting Subject", error);
-    throw error;
+    return NextResponse.json({
+      success: false,
+      message: "Error Deleting Subject",
+    });
   }
 };

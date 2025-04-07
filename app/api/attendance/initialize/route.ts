@@ -110,6 +110,24 @@ export async function POST(request: Request) {
       );
     }
 
+    const existingUser = await User.findOne({ email: user.email });
+
+    if (existingUser) {
+      if (existingUser.timeTable) {
+        const customTimeTable =
+          (await Attendance.findOne({
+            timeTable: existingUser.timeTable,
+            custom: true,
+          })) || null;
+
+        if (customTimeTable) {
+          await Attendance.findByIdAndDelete(customTimeTable._id);
+
+          await TimeTable.deleteOne({ _id: existingUser.timeTable });
+        }
+      }
+    }
+
     const now = new Date();
     const attendance = await Attendance.findOne({
       class: user.branch + user.section,
@@ -163,8 +181,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    const existingUser = await User.findOne({ email: user.email });
 
     const userData = {
       name: user.fullName,

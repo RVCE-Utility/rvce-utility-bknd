@@ -306,8 +306,25 @@ export async function uploadTimeTable(data: { user: any; timeTable: any }) {
 
   try {
     const { user, timeTable } = data;
-
     const now = new Date();
+
+    const existingUser = await User.findOne({ email: user.email });
+
+    if (existingUser) {
+      if (existingUser.timeTable) {
+        const customTimeTable =
+          (await Attendance.findOne({
+            timeTable: existingUser.timeTable,
+            custom: true,
+          })) || null;
+        if (customTimeTable) {
+          await Attendance.findByIdAndDelete(customTimeTable._id);
+
+          await TimeTable.deleteOne({ _id: existingUser.timeTable });
+        }
+      }
+    }
+
     const customTimeTable = new TimeTable({
       ...timeTable,
     });
@@ -349,8 +366,6 @@ export async function uploadTimeTable(data: { user: any; timeTable: any }) {
       if (!attendanceRecords.length) {
         throw new Error("No attendance records generated");
       }
-
-      const existingUser = await User.findOne({ email: user.email });
 
       const userData = {
         name: user.fullName,
