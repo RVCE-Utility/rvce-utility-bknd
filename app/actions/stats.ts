@@ -2,7 +2,6 @@
 
 import mongoose from "mongoose";
 import User from "@/models/user";
-import { Attendance, TimeTable } from "@/models/attendance";
 
 // Initialize MongoDB connection
 let isConnected = false;
@@ -38,7 +37,6 @@ export async function getStats(email: string) {
       throw new Error("Timetable not found for user");
     }
 
-    const minAttendance = user.minAttendance;
     const attendance = user.attendance;
     let attendanceState = [] as {
       courseId: string;
@@ -227,7 +225,7 @@ export async function getStats(email: string) {
       });
     });
 
-    let overallAttendanceState = {
+    const overallAttendanceState = {
       present: 0,
       absent: 0,
       pending: 0,
@@ -304,9 +302,9 @@ const getClasses = (courseStart: Date, courseEnd: Date) => {
     throw new Error("Invalid course dates provided");
   }
 
-  let sDate = new Date(courseStart);
-  let eDate = new Date(courseEnd);
-  let arr = [] as { day: string; count: number }[];
+  const sDate = new Date(courseStart);
+  const eDate = new Date(courseEnd);
+  const arr = [] as { day: string; count: number }[];
 
   if (sDate > eDate) {
     throw new Error("Course start date cannot be after end date");
@@ -314,7 +312,7 @@ const getClasses = (courseStart: Date, courseEnd: Date) => {
 
   function main() {
     const temp = sDate.toDateString().split(" ")[0].toUpperCase();
-    let found = arr.find((el: any) => el.day === temp);
+    const found = arr.find((el: any) => el.day === temp);
     if (found) {
       found.count++;
     } else {

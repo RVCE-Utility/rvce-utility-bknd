@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import fst from "fs";
 import * as path from "path";
 import os from "os";
-import { writeFile, readFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import { mkdir } from "fs/promises";
 import { userUpload } from "@/app/actions/userUpload";
 

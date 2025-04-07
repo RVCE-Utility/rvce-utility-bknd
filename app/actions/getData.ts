@@ -2,7 +2,6 @@
 
 import mongoose from "mongoose";
 import User from "@/models/user";
-import { NextResponse } from "next/server";
 
 // Initialize MongoDB connection
 let isConnected = false;

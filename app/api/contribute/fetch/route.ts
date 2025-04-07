@@ -1,7 +1,7 @@
 import { getUsersContribution } from "@/app/actions/userUpload";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   try {
     const res = await getUsersContribution();
     return NextResponse.json({

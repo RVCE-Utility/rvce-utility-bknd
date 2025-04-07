@@ -3,7 +3,7 @@
 import mongoose from "mongoose";
 import User from "@/models/user";
 import { Attendance, TimeTable } from "@/models/attendance";
-import { getDaySchedules } from "../api/attendance/initialize/route";
+import { getDaySchedules } from "@/utils/daySchedules";
 
 // Initialize MongoDB connection
 let isConnected = false;
@@ -342,8 +342,8 @@ export async function uploadTimeTable(data: { user: any; timeTable: any }) {
 
       // Get attendance records for each day
       const daySchedules = getDaySchedules(user.courseStartDate, now);
-      const attendanceRecords = daySchedules.flatMap((schedule) =>
-        schedule.dates.map((date) => ({
+      const attendanceRecords = daySchedules.flatMap((schedule: any) =>
+        schedule.dates.map((date: any) => ({
           date,
           dayTimeTable: result.events
             .filter((event: any) => event.day === schedule.day)

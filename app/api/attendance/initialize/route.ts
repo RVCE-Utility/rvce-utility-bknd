@@ -2,31 +2,7 @@ import mongoose from "mongoose";
 import User from "@/models/user";
 import { Attendance, TimeTable } from "@/models/attendance";
 import { NextResponse } from "next/server";
-
-interface TimeSlotData {
-  id: string;
-  display: string;
-  start: number;
-  end: number;
-}
-
-interface CourseData {
-  name: string;
-  fullName: string;
-  type: "theory" | "lab" | "session";
-  instructor?: string;
-  parentCourse?: string;
-}
-
-interface EventData {
-  day: "MON" | "TUE" | "WED" | "THU" | "FRI";
-  dayIndex: number;
-  courseId: string;
-  slotId: string;
-  duration: number;
-  attendance?: "pending" | "present" | "absent" | "ignore";
-  description?: string;
-}
+import { getDaySchedules } from "@/utils/daySchedules";
 
 interface DaySchedule {
   day: string;
@@ -50,44 +26,6 @@ async function connectDB() {
     throw new Error("Failed to connect to database");
   }
 }
-
-export const getDaySchedules = (
-  courseStart: Date,
-  courseEnd: Date
-): DaySchedule[] => {
-  if (!courseStart || !courseEnd) {
-    throw new Error("Invalid course dates provided");
-  }
-
-  const startDate = new Date(courseStart);
-  const endDate = new Date(courseEnd);
-
-  if (startDate > endDate) {
-    throw new Error("Course start date cannot be after end date");
-  }
-
-  const schedules: DaySchedule[] = [];
-  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-
-  days.forEach((day) => {
-    schedules.push({ day, dates: [] });
-  });
-
-  let currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    const dayName = currentDate.toDateString().split(" ")[0].toUpperCase();
-    const schedule = schedules.find((s) => s.day === dayName);
-
-    if (schedule) {
-      schedule.dates.push(currentDate.toDateString());
-    }
-
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return schedules.filter((schedule) => schedule.dates.length > 0);
-};
 
 export async function POST(request: Request) {
   await connectDB();
@@ -149,8 +87,8 @@ export async function POST(request: Request) {
 
     // Get attendance records for each day
     const daySchedules = getDaySchedules(user.courseStart, now);
-    const attendanceRecords = daySchedules.flatMap((schedule) =>
-      schedule.dates.map((date) => ({
+    const attendanceRecords = daySchedules.flatMap((schedule: any) =>
+      schedule.dates.map((date: any) => ({
         date,
         dayTimeTable: attendance.timeTable.events
           .filter((event: any) => event.day === schedule.day)
