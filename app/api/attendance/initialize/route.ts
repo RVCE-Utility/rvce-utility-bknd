@@ -66,7 +66,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const now = new Date();
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const now = new Date(Date.now() + istOffset);
     const attendance = await Attendance.findOne({
       class: user.branch + user.section,
     }).populate("timeTable");

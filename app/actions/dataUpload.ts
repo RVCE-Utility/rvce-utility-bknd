@@ -306,7 +306,8 @@ export async function uploadTimeTable(data: { user: any; timeTable: any }) {
 
   try {
     const { user, timeTable } = data;
-    const now = new Date();
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const now = new Date(Date.now() + istOffset);
 
     const existingUser = await User.findOne({ email: user.email });
 
