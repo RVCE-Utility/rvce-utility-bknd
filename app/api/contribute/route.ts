@@ -14,7 +14,7 @@ interface UserProp {
   imageUrl: string;
 }
 
-const LOCK_DIR = path.join(process.cwd(), "tmp", "locks");
+const LOCK_DIR = path.join(os.tmpdir(), "locks");
 
 // Create the lock directory if it doesn't exist
 try {
