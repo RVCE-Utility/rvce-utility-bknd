@@ -1,4 +1,3 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
@@ -27,12 +26,6 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
-
-const isProtectedRoute = createRouteMatcher(["/api(.*)"]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect();
-});
 
 export const config = {
   matcher: [
