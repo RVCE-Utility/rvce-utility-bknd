@@ -14,6 +14,13 @@ interface UserProp {
   imageUrl: string;
 }
 
+const serviceAccountStr = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || '{}';
+const serviceAccount = JSON.parse(serviceAccountStr);
+
+if (serviceAccount.private_key) {
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+}
+
 const LOCK_DIR = path.join(os.tmpdir(), "locks");
 
 // Create the lock directory if it doesn't exist
@@ -144,9 +151,7 @@ export async function POST(req: NextRequest) {
 
     // Initialize Google Drive
     const auth = new google.auth.GoogleAuth({
-        credentials: JSON.parse(
-        process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || "{}"
-      ), 
+        credentials: serviceAccount, 
       scopes: ["https://www.googleapis.com/auth/drive.file"],
     });
 
