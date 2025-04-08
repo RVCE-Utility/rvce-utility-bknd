@@ -144,7 +144,9 @@ export async function POST(req: NextRequest) {
 
     // Initialize Google Drive
     const auth = new google.auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), "credentials.json"),
+      credentials: JSON.parse(
+        process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || "{}"
+      ),
       scopes: ["https://www.googleapis.com/auth/drive.file"],
     });
 
