@@ -57,7 +57,7 @@ export const hasTimeTable = async (email: string) => {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      throw new Error("User not found");
+      return { hasTimeTable: false };
     }
     const checkTimeTable = user.timeTable;
 
