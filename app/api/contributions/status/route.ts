@@ -60,6 +60,34 @@ export async function POST(request: NextRequest) {
         file.rejectionComment = rejectionComment;
       }
 
+      if (status === "approved") {
+        const contributor = await Contributors.findOne({
+          email: file.contributedBy,
+        });
+
+        const resource = {
+          fileId: file.fileId,
+          fileType: file.docType, // Ensure this is a valid type
+        };
+
+        if (contributor) {
+          // Prevent duplicate fileId entries
+          if (
+            !contributor.resources.some((r: any) => r.fileId === file.fileId)
+          ) {
+            contributor.resources.push(resource);
+            await contributor.save();
+          }
+        } else {
+          const newContributor = new Contributors({
+            name: file.contributedBy,
+            email: file.contributedBy,
+            resources: [resource],
+          });
+          await newContributor.save();
+        }
+      }
+
       // Send email if approved or rejected and sendEmail is true
       if (sendEmail && (status === "approved" || status === "rejected")) {
         // Fetch the contributed user
@@ -176,6 +204,36 @@ export async function POST(request: NextRequest) {
       contribution.status = status;
       if (rejectionComment) {
         contribution.rejectionComment = rejectionComment;
+      }
+
+      if (status === "approved") {
+        const contributor = await Contributors.findOne({
+          email: user.email,
+        });
+
+        const resource = {
+          fileId: contribution.fileId,
+          fileType: contribution.docType, // Ensure this is a valid type
+        };
+
+        if (contributor) {
+          // Prevent duplicate fileId entries
+          if (
+            !contributor.resources.some(
+              (r: any) => r.fileId === contribution.fileId
+            )
+          ) {
+            contributor.resources.push(resource);
+            await contributor.save();
+          }
+        } else {
+          const newContributor = new Contributors({
+            name: user.name || user.email,
+            email: user.email,
+            resources: [resource],
+          });
+          await newContributor.save();
+        }
       }
 
       // Send email if approved or rejected and sendEmail is true
