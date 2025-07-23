@@ -304,7 +304,7 @@ export async function POST(req: NextRequest) {
     const { responseData, subjectName, user, uploadSessionId } =
       await req.json();
 
-    console.log(responseData);
+    // console.log(responseData);
     await userUpload(user, subjectName, uploadSessionId, responseData);
 
     // Notify after successful upload
