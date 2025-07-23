@@ -81,7 +81,9 @@ export default function ContributionManager() {
   const handleStatusUpdate = async (
     contributionId: string,
     status: string,
-    rejectionComment?: string
+    rejectionComment?: string,
+    sendEmail?: boolean,
+    adminComment?: string
   ) => {
     try {
       const isRequestContribution = activeTab === "request";
@@ -99,6 +101,8 @@ export default function ContributionManager() {
           isRequestContribution,
           requestId: contribution?.requestId,
           documentId: contribution?.documentId,
+          sendEmail,
+          adminComment,
         }),
       });
 

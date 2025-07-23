@@ -59,7 +59,9 @@ interface ContributionCardProps {
   onStatusUpdate?: (
     id: string,
     status: string,
-    rejectionComment?: string
+    rejectionComment?: string,
+    sendEmail?: boolean,
+    adminComment?: string
   ) => void;
   isRequestContribution?: boolean;
 }
@@ -72,6 +74,10 @@ export function ContributionCard({
   const [copied, setCopied] = useState(false);
   const [rejectionComment, setRejectionComment] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showApproveDialog, setShowApproveDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [sendEmail, setSendEmail] = useState(false);
+  const [adminComment, setAdminComment] = useState("");
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -144,8 +150,17 @@ export function ContributionCard({
     setIsProcessing(true);
     try {
       if (onStatusUpdate) {
-        await onStatusUpdate(contribution._id!, "approved");
+        await onStatusUpdate(
+          contribution._id!,
+          "approved",
+          undefined,
+          sendEmail,
+          sendEmail ? adminComment : undefined
+        );
         toast.success("Contribution approved successfully");
+        setShowApproveDialog(false);
+        setAdminComment("");
+        setSendEmail(false);
       }
     } catch (error) {
       toast.error("Failed to approve contribution");
@@ -159,12 +174,20 @@ export function ContributionCard({
       toast.error("Please provide a rejection comment");
       return;
     }
-
     setIsProcessing(true);
     try {
       if (onStatusUpdate) {
-        await onStatusUpdate(contribution._id!, "rejected", rejectionComment);
+        await onStatusUpdate(
+          contribution._id!,
+          "rejected",
+          rejectionComment,
+          sendEmail,
+          sendEmail ? adminComment : undefined
+        );
         toast.success("Contribution rejected");
+        setShowRejectDialog(false);
+        setAdminComment("");
+        setSendEmail(false);
         setRejectionComment("");
       }
     } catch (error) {
@@ -357,53 +380,120 @@ export function ContributionCard({
                 <>
                   <Button
                     size="sm"
-                    onClick={handleApprove}
+                    onClick={() => setShowApproveDialog(true)}
                     disabled={isProcessing}
                     className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle className="h-3 w-3" />
                     {isProcessing ? "Processing..." : "Accept"}
                   </Button>
-
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex items-center gap-1 text-red-600 hover:text-red-700"
-                      >
-                        <XCircle className="h-3 w-3" />
-                        Reject
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Reject Contribution</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Please provide a reason for rejecting this
-                          contribution.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <div className="my-4">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-1 text-red-600 hover:text-red-700"
+                    onClick={() => setShowRejectDialog(true)}
+                  >
+                    <XCircle className="h-3 w-3" />
+                    Reject
+                  </Button>
+                  {/* Approve Dialog */}
+                  <Dialog
+                    open={showApproveDialog}
+                    onOpenChange={setShowApproveDialog}
+                  >
+                    <DialogContent className="w-full max-w-lg sm:max-w-xl">
+                      <DialogHeader>
+                        <DialogTitle>Approve Contribution</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={sendEmail}
+                              onChange={(e) => setSendEmail(e.target.checked)}
+                            />
+                            Send email to user
+                          </label>
+                        </div>
+                        {sendEmail && (
+                          <Textarea
+                            placeholder="Enter admin comment (optional)"
+                            value={adminComment}
+                            onChange={(e) => setAdminComment(e.target.value)}
+                            className="min-h-[100px]"
+                          />
+                        )}
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowApproveDialog(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={handleApprove}
+                            disabled={isProcessing}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            {isProcessing ? "Processing..." : "Approve"}
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  {/* Reject Dialog */}
+                  <Dialog
+                    open={showRejectDialog}
+                    onOpenChange={setShowRejectDialog}
+                  >
+                    <DialogContent className="w-full max-w-lg sm:max-w-xl">
+                      <DialogHeader>
+                        <DialogTitle>Reject Contribution</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
                         <Textarea
                           placeholder="Enter rejection reason..."
                           value={rejectionComment}
                           onChange={(e) => setRejectionComment(e.target.value)}
                           className="min-h-[100px]"
                         />
+                        <div>
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={sendEmail}
+                              onChange={(e) => setSendEmail(e.target.checked)}
+                            />
+                            Send email to user
+                          </label>
+                        </div>
+                        {sendEmail && (
+                          <Textarea
+                            placeholder="Enter admin comment (optional)"
+                            value={adminComment}
+                            onChange={(e) => setAdminComment(e.target.value)}
+                            className="min-h-[100px]"
+                          />
+                        )}
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowRejectDialog(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={handleReject}
+                            disabled={!rejectionComment.trim() || isProcessing}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            {isProcessing ? "Processing..." : "Reject"}
+                          </Button>
+                        </div>
                       </div>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleReject}
-                          disabled={!rejectionComment.trim() || isProcessing}
-                          className="bg-red-600 hover:bg-red-700"
-                        >
-                          {isProcessing ? "Processing..." : "Reject"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                    </DialogContent>
+                  </Dialog>
                 </>
               )}
           </div>
