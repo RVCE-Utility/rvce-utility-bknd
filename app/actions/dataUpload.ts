@@ -57,6 +57,7 @@ interface UserData {
   name: string;
   email: string;
   imageUrl?: string;
+  semester?: string;
   branch?: string;
   section?: string;
   courseStart?: Date;
@@ -105,20 +106,46 @@ export async function initDay(data: InitDay) {
       throw new Error("Timetable not found");
     }
 
-    // Compare only the day (not time), in IST
-    const dataDateIST = new Date(
-      new Date(data.date).toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-    );
-    const courseEndIST = new Date(
-      new Date(user.courseEnd).toLocaleString("en-US", {
-        timeZone: "Asia/Kolkata",
-      })
-    );
-    // Set time to 00:00:00 for both dates to compare only the day
-    dataDateIST.setHours(0, 0, 0, 0);
-    courseEndIST.setHours(0, 0, 0, 0);
+    console.log(data.date, user.courseEnd);
 
-    if (dataDateIST > courseEndIST) {
+    // Compare only the day (not time), in IST
+    // Convert to IST and extract date parts
+    const dataDate = new Date(data.date);
+    const courseEndDate = new Date(user.courseEnd);
+
+    // Get date string in IST timezone (e.g., "9/29/2025, 12:00:00 AM")
+    const dataDateISTString = dataDate.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const courseEndISTString = courseEndDate.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+
+    // Parse the MM/DD/YYYY format and create UTC dates at midnight
+    const [dataMonth, dataDay, dataYear] = dataDateISTString.split("/");
+    const [courseEndMonth, courseEndDay, courseEndYear] =
+      courseEndISTString.split("/");
+
+    const dataDateOnly = new Date(
+      Date.UTC(parseInt(dataYear), parseInt(dataMonth) - 1, parseInt(dataDay))
+    );
+    const courseEndOnly = new Date(
+      Date.UTC(
+        parseInt(courseEndYear),
+        parseInt(courseEndMonth) - 1,
+        parseInt(courseEndDay)
+      )
+    );
+
+    console.log(dataDateOnly, courseEndOnly);
+
+    if (dataDateOnly > courseEndOnly) {
       return {
         success: true,
         dayTable: JSON.stringify(
@@ -132,7 +159,7 @@ export async function initDay(data: InitDay) {
       };
     }
 
-    if (dataDateIST < user.courseStart) {
+    if (dataDateOnly < user.courseStart) {
       return {
         success: true,
         dayTable: JSON.stringify([]),

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     const { user } = body;
 
     // Validate user data
-    if (!user.email || !user.branch || !user.courseStart) {
+    if (!user.email || !user.semester || !user.branch || !user.courseStart) {
       return NextResponse.json(
         { error: "Missing required user data" },
         { status: 400 }
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     // Use IST midnight for 'now'
     const now = toISTMidnight(new Date());
     const attendance = await Attendance.findOne({
-      class: user.branch + user.section,
+      class: user.semester + user.branch + user.section,
     }).populate("timeTable");
 
     if (!attendance) {
