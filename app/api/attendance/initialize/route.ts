@@ -27,15 +27,23 @@ async function connectDB() {
   }
 }
 
-// Utility function to convert a date to IST and set time to 00:00:00
-function toISTMidnight(date: Date | string): Date {
+// Utility function to convert a date to IST and return date string
+function toISTDateString(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : new Date(date);
-  // Convert to IST
-  const utc = d.getTime() + d.getTimezoneOffset() * 60000;
-  const ist = new Date(utc + 5.5 * 60 * 60 * 1000);
-  // Set time to 00:00:00
-  ist.setHours(0, 0, 0, 0);
-  return ist;
+  // Get the date in IST timezone
+  const istDateString = d.toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  // Parse MM/DD/YYYY and create a Date object
+  const [month, day, year] = istDateString.split("/");
+  const istDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+  // Return the date string in format "Mon Sep 29 2025"
+  return istDate.toDateString();
 }
 
 export async function POST(request: Request) {
@@ -77,8 +85,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Use IST midnight for 'now'
-    const now = toISTMidnight(new Date());
+    // Use IST for 'now'
+    const now = new Date();
     const attendance = await Attendance.findOne({
       class: user.semester + user.branch + user.section,
     }).populate("timeTable");
@@ -101,7 +109,7 @@ export async function POST(request: Request) {
     const daySchedules = getDaySchedules(user.courseStart, now);
     const attendanceRecords = daySchedules.flatMap((schedule: any) =>
       schedule.dates.map((date: any) => ({
-        date: toISTMidnight(date),
+        date: toISTDateString(date),
         dayTimeTable: attendance.timeTable.events
           .filter((event: any) => event.day === schedule.day)
           .map((event: any) => {

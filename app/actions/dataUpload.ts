@@ -106,8 +106,6 @@ export async function initDay(data: InitDay) {
       throw new Error("Timetable not found");
     }
 
-    console.log(data.date, user.courseEnd);
-
     // Compare only the day (not time), in IST
     // Convert to IST and extract date parts
     const dataDate = new Date(data.date);
@@ -142,8 +140,6 @@ export async function initDay(data: InitDay) {
         parseInt(courseEndDay)
       )
     );
-
-    console.log(dataDateOnly, courseEndOnly);
 
     if (dataDateOnly > courseEndOnly) {
       return {
