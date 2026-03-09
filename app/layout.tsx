@@ -62,6 +62,12 @@ function NavBar() {
           >
             Contribution Manager
           </a>
+          <a
+            href="/content-manager"
+            className="text-gray-700 hover:text-blue-700 hover:underline"
+          >
+            Content Manager
+          </a>
         </div>
         <div className="flex items-center gap-4">
           {status === "loading" ? null : session ? (
