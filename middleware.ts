@@ -24,7 +24,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Auth0-protected API routes
+  // 3. NextAuth routes (allow public access)
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
+  // 4. Auth0-protected API routes
   if (
     pathname.startsWith("/api/attendance") ||
     pathname.startsWith("/api/contribute") ||
@@ -45,12 +50,14 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // 4. NextAuth-protected admin pages
+  // 5. NextAuth-protected admin pages
   if (
     pathname.startsWith("/api/drive") ||
     pathname.startsWith("/api/contributions") ||
+    pathname.startsWith("/api/content-manager") ||
     pathname.startsWith("/drive-manager") ||
-    pathname.startsWith("/contribution-manager")
+    pathname.startsWith("/contribution-manager") ||
+    pathname.startsWith("/content-manager")
   ) {
     const token = await getToken({
       req: request,
@@ -64,7 +71,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 5. Default: allow
+  // 6. Default: allow
   return NextResponse.next();
 }
 
