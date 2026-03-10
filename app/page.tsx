@@ -147,6 +147,29 @@ export default function Home() {
             </div>
           </CardContent>
         </Card>
+
+        <footer className="mt-12 pb-8">
+          <div className="text-center">
+            <div className="flex justify-center items-center gap-6 text-sm text-gray-600">
+              <Link
+                href="/privacy-policy"
+                className="hover:text-blue-600 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-gray-400">|</span>
+              <Link
+                href="/terms-of-service"
+                className="hover:text-blue-600 transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </div>
+            <p className="text-sm text-gray-500 mt-4">
+              © {new Date().getFullYear()} RVCE Utility. All rights reserved.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
