@@ -38,6 +38,16 @@ TELEGRAM_CHAT_ID=your_telegram_chat_id (optional)
 GITHUB_TOKEN=your_github_personal_access_token
 GITHUB_REPO_OWNER=your_github_repo_owner
 GITHUB_REPO_NAME=your_github_repo_name
+
+# Firebase (Realtime Database)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your-project-id-default-rtdb.region.firebasedatabase.app
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_firebase_measurement_id
 ```
 
 **Note**: For the Content Manager to work, you need a GitHub Personal Access Token with `contents: write` permission. Generate one at [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens).

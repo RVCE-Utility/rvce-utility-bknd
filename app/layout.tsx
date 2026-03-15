@@ -68,6 +68,12 @@ function NavBar() {
           >
             Content Manager
           </a>
+          <a
+            href="/feedbacks"
+            className="text-gray-700 hover:text-blue-700 hover:underline"
+          >
+            Feedbacks
+          </a>
         </div>
         <div className="flex items-center gap-4">
           {status === "loading" ? null : session ? (
