@@ -120,3 +120,4 @@ const Attendance =
   mongoose.models.Attendance || mongoose.model("Attendance", attendanceSchema);
 
 export { Attendance, TimeTable, courseSchema };
+export { timeSlotSchema, eventSchema };

@@ -33,6 +33,7 @@ export async function middleware(request: NextRequest) {
   if (
     pathname.startsWith("/api/attendance") ||
     pathname.startsWith("/api/contribute") ||
+    pathname.startsWith("/api/community") ||
     pathname.startsWith("/api/getData") ||
     pathname.startsWith("/api/requests") ||
     pathname.startsWith("/api/timetable")
