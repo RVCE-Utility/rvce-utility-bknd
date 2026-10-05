@@ -7,6 +7,8 @@ const handler = NextAuth({
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
+      // GitHub includes this issuer in OAuth callbacks (RFC 9207).
+      issuer: "https://github.com/login/oauth",
     }),
   ],
   callbacks: {
